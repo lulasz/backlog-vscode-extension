@@ -2,7 +2,7 @@
   "name": "lm-backlog",
   "displayName": "Backlog",
   "description": "Create tasks and attach relevant files to them",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "lulasz",
   "repository": {
     "type": "git",
