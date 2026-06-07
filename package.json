@@ -6,7 +6,7 @@
   "publisher": "lulasz",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lulasz/lm-backlog-extension.git"
+    "url": "https://github.com/lulasz/backlog-vscode-extension.git"
   },
   "engines": {
     "vscode": "^1.85.0"
