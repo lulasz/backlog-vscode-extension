@@ -183,21 +183,18 @@ function handleRemoveFile(provider: BacklogProvider) {
 }
 
 function handleOpenFile() {
-  return (arg: string | { uri: vscode.Uri; selection: vscode.Range }) => {
-    if (typeof arg === "string") {
-      vscode.window
-        .showTextDocument(vscode.Uri.file(arg))
-        .then(undefined, () =>
-          vscode.window.showErrorMessage(MESSAGES.FILE.OPEN_ERROR(arg)),
-        );
-    } else {
-      vscode.window
-        .showTextDocument(arg.uri, { selection: arg.selection })
-        .then(undefined, () =>
-          vscode.window.showErrorMessage(
-            MESSAGES.FILE.OPEN_ERROR(arg.uri.fsPath),
-          ),
-        );
+  return async (arg: string | { uri: vscode.Uri; selection: vscode.Range }) => {
+    try {
+      if (typeof arg === "string") {
+        await vscode.window.showTextDocument(vscode.Uri.file(arg));
+      } else {
+        await vscode.window.showTextDocument(arg.uri, {
+          selection: arg.selection,
+        });
+      }
+    } catch (err) {
+      const errorMsg = typeof arg === "string" ? arg : arg.uri.fsPath;
+      vscode.window.showErrorMessage(MESSAGES.FILE.OPEN_ERROR(errorMsg));
     }
   };
 }

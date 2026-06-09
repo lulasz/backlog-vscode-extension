@@ -18,4 +18,13 @@ Tasks are by default saved to `.vscode/backlog.json`, but can be configured in y
 2. Install it via Command Palette using `Extensions: Install from VSIX...`
 3. Done
 
+---
+
+**1.1.1**
+
+![Screenshot](.docs/ss-2.png)
+
+
+**v1.0.1**
+
 ![Screenshot](.docs/ss-1.png)

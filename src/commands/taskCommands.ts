@@ -4,6 +4,7 @@ import { BacklogProvider } from "../provider/BacklogProvider";
 import { TaskItem } from "../tree/TaskItem";
 import { COMMANDS } from "../constants";
 import { MESSAGES } from "../constants/messages";
+import { TaskStatus } from "../types";
 
 export function registerTaskCommands(
   context: vscode.ExtensionContext,
@@ -21,8 +22,20 @@ export function registerTaskCommands(
       handleDeleteTask(provider),
     ),
     vscode.commands.registerCommand(
-      COMMANDS.TOGGLE_COMPLETE,
-      handleToggleComplete(provider),
+      COMMANDS.SET_STATUS_TODO,
+      handleSetStatus(provider, "todo"),
+    ),
+    vscode.commands.registerCommand(
+      COMMANDS.SET_STATUS_WIP,
+      handleSetStatus(provider, "wip"),
+    ),
+    vscode.commands.registerCommand(
+      COMMANDS.SET_STATUS_DONE,
+      handleSetStatus(provider, "done"),
+    ),
+    vscode.commands.registerCommand(
+      COMMANDS.SET_STATUS_BLOCKED,
+      handleSetStatus(provider, "blocked"),
     ),
     vscode.commands.registerCommand(
       COMMANDS.OPEN_ALL_TASK_FILES,
@@ -73,9 +86,9 @@ function handleDeleteTask(provider: BacklogProvider) {
   };
 }
 
-function handleToggleComplete(provider: BacklogProvider) {
+function handleSetStatus(provider: BacklogProvider, status: TaskStatus) {
   return async (item: TaskItem) => {
-    provider.service.toggleComplete(item.task.id);
+    provider.service.setStatus(item.task.id, status);
     provider.notifyChanged();
   };
 }

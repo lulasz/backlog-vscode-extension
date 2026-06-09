@@ -1,8 +1,10 @@
+export type TaskStatus = "todo" | "wip" | "done" | "blocked";
+
 export interface BacklogTask {
   id: string;
   name: string;
   files: BacklogFile[];
-  completed: boolean;
+  status: TaskStatus;
   timestamp: number;
 }
 

@@ -14,6 +14,7 @@ export class BacklogProvider implements vscode.TreeDataProvider<
   constructor(
     private readonly _service: BacklogService,
     private readonly workspaceRoot: string,
+    private readonly _extensionUri: vscode.Uri,
   ) {}
 
   refresh(): void {
@@ -27,19 +28,7 @@ export class BacklogProvider implements vscode.TreeDataProvider<
 
   getChildren(element?: TaskItem | FileItem): (TaskItem | FileItem)[] {
     if (!element) {
-      const tasks = this.service.getTasks();
-
-      const sortedTasks = [...tasks].sort((a, b) => {
-        // 1. Separate active and completed tasks
-        if (a.completed !== b.completed) {
-          return a.completed ? 1 : -1;
-        }
-
-        // 2. Sort by timestamp (newest first) for both groups
-        return b.timestamp - a.timestamp;
-      });
-
-      return sortedTasks.map((t) => new TaskItem(t));
+      return this.service.getTasks().map((t) => new TaskItem(t));
     }
     if (element instanceof TaskItem) {
       return element.task.files.map(

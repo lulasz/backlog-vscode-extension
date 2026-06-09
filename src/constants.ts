@@ -4,7 +4,10 @@ export const COMMANDS = {
   ADD_TASK: "backlog.addTask",
   EDIT_TASK: "backlog.editTask",
   DELETE_TASK: "backlog.deleteTask",
-  TOGGLE_COMPLETE: "backlog.toggleComplete",
+  SET_STATUS_TODO: "backlog.setStatusTodo",
+  SET_STATUS_WIP: "backlog.setStatusWip",
+  SET_STATUS_DONE: "backlog.setStatusDone",
+  SET_STATUS_BLOCKED: "backlog.setStatusBlocked",
   OPEN_ALL_TASK_FILES: "backlog.openAllTaskFiles",
 
   ADD_FILE: "backlog.addFile",

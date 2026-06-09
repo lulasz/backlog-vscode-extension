@@ -3,6 +3,7 @@ import { BacklogProvider } from "./provider/BacklogProvider";
 import { registerAllCommands } from "./commands";
 import { VIEW_ID } from "./constants";
 import { BacklogService } from "./services/BacklogService";
+import { TaskDecorationProvider } from "./provider/TaskDecorationProvider";
 
 export function activate(context: vscode.ExtensionContext): void {
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -13,10 +14,15 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 
   const service = new BacklogService(workspaceRoot);
-  const provider = new BacklogProvider(service, workspaceRoot);
+  const provider = new BacklogProvider(
+    service,
+    workspaceRoot,
+    context.extensionUri,
+  );
 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider(VIEW_ID, provider),
+    vscode.window.registerFileDecorationProvider(new TaskDecorationProvider()),
   );
 
   registerAllCommands(context, provider, workspaceRoot);

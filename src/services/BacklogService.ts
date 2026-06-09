@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { BacklogTask, BacklogData } from "../types";
+import { BacklogTask, BacklogData, TaskStatus } from "../types";
 import { loadData, saveData } from "../utils/storage";
 
 export class BacklogService {
@@ -24,7 +24,19 @@ export class BacklogService {
   }
 
   getTasks(): BacklogTask[] {
-    return this.data.tasks;
+    const statusPriority: Record<string, number> = {
+      wip: 1,
+      todo: 2,
+      blocked: 3,
+      done: 4,
+    };
+
+    return [...this.data.tasks].sort((a, b) => {
+      if (a.status !== b.status) {
+        return statusPriority[a.status] - statusPriority[b.status];
+      }
+      return b.timestamp - a.timestamp;
+    });
   }
 
   getTasksContainingFile(relPath: string): BacklogTask[] {
@@ -38,28 +50,22 @@ export class BacklogService {
       id: this.generateId(),
       name,
       files: [],
-      completed: false,
+      status: "todo",
       timestamp: Date.now(),
     });
     this.save();
   }
 
-  toggleComplete(taskId: string): void {
-    const task = this.findTask(taskId);
-    if (task) {
-      task.completed = !task.completed;
-      task.timestamp = Date.now();
-      this.save();
-    }
+  setStatus(taskId: string, status: TaskStatus): void {
+    this.updateTask(taskId, (task) => {
+      task.status = status;
+    });
   }
 
   renameTask(taskId: string, newName: string): void {
-    const task = this.findTask(taskId);
-    if (task) {
+    this.updateTask(taskId, (task) => {
       task.name = newName;
-      task.timestamp = Date.now();
-      this.save();
-    }
+    });
   }
 
   deleteTask(taskId: string): void {
@@ -68,18 +74,29 @@ export class BacklogService {
   }
 
   addFileToTask(taskId: string, file: { path: string; line: number }): boolean {
-    const task = this.findTask(taskId);
-    if (!task || task.files.some((f) => f.path === file.path)) return false;
-    task.files.push(file);
-    task.timestamp = Date.now();
-    this.save();
-    return true;
+    let success = false;
+    this.updateTask(taskId, (task) => {
+      if (!task.files.some((f) => f.path === file.path)) {
+        task.files.push(file);
+        success = true;
+      }
+    });
+    return success;
   }
 
   removeFileFromTask(taskId: string, filePath: string): void {
+    this.updateTask(taskId, (task) => {
+      task.files = task.files.filter((f) => f.path !== filePath);
+    });
+  }
+
+  private updateTask(
+    taskId: string,
+    updater: (task: BacklogTask) => void,
+  ): void {
     const task = this.findTask(taskId);
     if (task) {
-      task.files = task.files.filter((f) => f.path !== filePath);
+      updater(task);
       task.timestamp = Date.now();
       this.save();
     }

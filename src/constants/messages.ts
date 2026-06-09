@@ -51,6 +51,5 @@ export const MESSAGES = {
     TASK_NO_FILES: "no files",
     TASK_FILES_COUNT: (count: number) =>
       `${count} file${count !== 1 ? "s" : ""}`,
-    TASK_COMPLETED: "completed",
   },
 } as const;
